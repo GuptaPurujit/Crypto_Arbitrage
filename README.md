@@ -1,4 +1,4 @@
-The idea of the project is to develop a arbitrage bot 
+the idea of the project is to develop a arbitrage bot 
 
 
 THINGS TO DO: 
