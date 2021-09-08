@@ -70,7 +70,7 @@ def print_arbitrage(wazir, binance, wazir_price, binance_price):
                 formatted_print(wazir, b_price, w_price, diff, percentage, direction)
                 temp = input('Do you want to track this coin (Y/N): ')
                 if temp == 'Y' or temp == 'y' or temp == '':
-                    track_stock.trade_coin(wazir[0].lower(), wazir) 
+                    trade_coin(wazir[0].lower()) 
                 else:
                     return
         else:
@@ -79,6 +79,7 @@ def print_arbitrage(wazir, binance, wazir_price, binance_price):
 # Convectional method without the websocket
 def get_arbitrage(wazir_price, binance_price):
     for i in range(len(wazir_price)):
+        # print(wazir_price)
         w_symbol = wazir_price[i][0]
         for j in range(len(binance_price)):
             b_symbol = binance_price[j][0]
@@ -93,6 +94,20 @@ def get_arbitrage_new(wazir_price, binance_price, symbol):
     print(symbol.upper())
     binance_websocket.run_socket()
     return 1
+
+
+def trade_coin(symbol):
+    try:
+        while(1):
+            # print the binance coin price
+            binance_websocket.cc = symbol
+            # binance_websocket.run_socket() 
+
+            # print the wazirx coin price
+            wazir = get_wazir_data(symbol)
+            print(wazir)
+    except KeyboardInterrupt:
+        return
 
 
 # WazirX API reponse
@@ -122,23 +137,48 @@ print(wazir_price)
 '''
 # Using tickers api
 
-response = requests.get('https://api.wazirx.com/api/v2/tickers')
-response = response.json()
+# response = requests.get('https://api.wazirx.com/api/v2/tickers')
+# response = response.json()
 # print(response)
 
-wazir_price = []
-for i in response:
-    if(checkKey(response[i], 'last') == 1 and checkKey(response[i], 'volume') == 1):
-        symbol = i.upper()
-        sell = response[i]['sell']
-        buy = response[i]['buy']
-        last = response[i]['last']
-        volume = response[i]['volume']
-        if response[i]['quote_unit'] == 'usdt':
-            wazir_price.append([symbol, last, sell, buy, volume])
+# wazir_price = []
+# for i in response:
+#     if(checkKey(response[i], 'last') == 1 and checkKey(response[i], 'volume') == 1):
+#         symbol = i.upper()
+#         sell = response[i]['sell']
+#         buy = response[i]['buy']
+#         last = response[i]['last']
+#         volume = response[i]['volume']
+#         if response[i]['quote_unit'] == 'usdt':
+#             wazir_price.append([symbol, last, sell, buy, volume])
 
 # print(wazir_price)
+wazir_price = []
+def get_wazir_data(symbol=''):
+    trade_wazir_price = []
+    check_symbol = symbol
+    # print(symbol)
+    # Using tickers api 
+    response = requests.get('https://api.wazirx.com/api/v2/tickers')
+    response = response.json()
+    # print(response)
+    for i in response:
+        if(checkKey(response[i], 'last') == 1 and checkKey(response[i], 'volume') == 1):
+            symbol = i.upper()
+            sell = response[i]['sell']
+            buy = response[i]['buy']
+            last = response[i]['last']
+            volume = response[i]['volume']
+            if response[i]['quote_unit'] == 'usdt':
+                wazir_price.append([symbol, last, sell, buy, volume])
+    # print(wazir_price)	
+    trade_wazir_price = wazir_price
+    wazir = []
+    for i in range(len(trade_wazir_price)):
+        if check_symbol.upper() == trade_wazir_price[i][0]:
+            wazir = trade_wazir_price[i]
 
+    return wazir
 
 # Binance API response
 response = requests.get('https://api.binance.com/api/v3/ticker/price')
@@ -152,5 +192,6 @@ for i in response:
         b_last_price = i["price"]
         binance_price.append([b_symbol, b_last_price])
 
+get_wazir_data()
 get_arbitrage(wazir_price, binance_price)
 # get_arbitrage_new(wazir_price, binance_price, symbol)
