@@ -1,5 +1,7 @@
 import binance_websocket
 import requests
+import json
+
 
 def checkKey(dict, key): 
 	if key in dict.keys():
