@@ -74,4 +74,5 @@ def run_socket():
     ws = create_connection(f'wss://stream.binance.com:9443/ws/{cc}@kline_{interval}')
     result = ws.recv()
     on_message(ws, result)
-    ws.close()
+
+# run_socket()

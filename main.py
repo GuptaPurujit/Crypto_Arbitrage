@@ -1,6 +1,7 @@
 import requests
 import json
 import binance_websocket
+import track_stock 
 
 # Convert Dollar to INR 
 def dlr_inr():
@@ -67,6 +68,11 @@ def print_arbitrage(wazir, binance, wazir_price, binance_price):
             print(wazir)
             if flag == 1:
                 formatted_print(wazir, b_price, w_price, diff, percentage, direction)
+                temp = input('Do you want to track this coin (Y/N): ')
+                if temp == 'Y' or temp == 'y' or temp == '':
+                    track_stock.trade_coin(wazir[0].lower(), wazir) 
+                else:
+                    return
         else:
             return
 
@@ -81,7 +87,7 @@ def get_arbitrage(wazir_price, binance_price):
 
 # Websocket impelementation of getting the stock prices
 def get_arbitrage_new(wazir_price, binance_price, symbol):
-    if(symbol in ['stratusdt', 'npxsusdt', 'stormusdt']):
+    if(symbol in ['stratusdt', 'npxsusdt', 'stormusdt', 'klayusdt']):
         return 0 
     binance_websocket.cc = symbol
     print(symbol.upper())
